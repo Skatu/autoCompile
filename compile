@@ -1,0 +1,52 @@
+#!/bin/bash
+
+shutdown(){
+	echo "Fechar programa"
+	exit 1
+}
+
+option=$1
+file=$2
+out=$3
+
+#echo "Params: $#"
+#echo "$1: "$1""
+#echo "$2: "$2""
+#echo "$3: "$3""
+
+if [ $# -ne 2 ] && [ $# -ne 3 ]; then
+	echo "Inserir a opção de -r se pretende correr, o nome do ficheiro C e o nome do ficheiro compilado"
+	exit 1
+fi
+
+if [ $# -eq "2" ] ; then
+	echo "params 2"
+	#fileName=$( echo "$option" | grep '\.c$')
+	#echo "filename: $filename"
+	#echo "$1: "$1""
+	if   grep -q '\.c$' $1; then
+		echo "Ficheiro nao encontrado"
+		shutdown
+	fi
+	gcc -Wall "$1" -o "$2"
+	echo "Compilação com sucesso"
+else
+#	echo "$1"
+	if [ "$1" == "\-r" ]; then
+		echo "parâmetro -r inválido"
+		shutdown
+	fi
+#	echo "check for grep"	
+	if grep -q '\.c$' $2;then
+		echo "Ficheiro C inválido"
+		shutdown
+	fi
+
+	gcc -Wall "$2" -o "$3"
+
+	if [ $? -eq "0" ];then
+		echo "Compilação com sucesso"
+		echo " "
+		./"$3"
+	fi
+fi
